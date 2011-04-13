@@ -7,13 +7,17 @@ using namespace std;
 
 class phiirc
 {
+private:
 	struct struct
 	{
 		char* channel;
 		char* nick;
 	}irc_ctx_t;
 	
-	public:
+	static void deamonize();
+	
+	void event_privmsg(irc_session_t* session,const char* event,const char* origin,const char** params,unsigned int count);
+public:
 	void init(int argc,char* argv[]);
 	
 	
