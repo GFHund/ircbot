@@ -1,15 +1,25 @@
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <string>
+#include <string.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+
+using namespace std;
 
 class irc
 {
+private: 
+	//extern int h_errno;
+	int sock;
 	
-	protected:
-		irc_session_t* session;
-
-	
-		int initIRC(bool connect,bool join,bool channel,bool privmsg);
-		void runIRC();
-		virtual void event_connect(irc_session_t* session,const char* event,const char* origin, const char** params, unsigned int count)=0;
-		virtual void event_join(irc_session_t* session,const char* event,const char* origin,const char**params,unsigned int count)=0;
-		virtual void event_channel(irc_session_t* session,const char* event,const char* origin,  const char** params,unsigned int count)=0;
-		virtual void event_privmsg(irc_session_t* sessionm const char* event,const char* origin, const char** params, unsignede int count)=0;
-}
+protected:	
+	int initIRC(string ip,int port,string channel);
+	void updateIRC();
+	void closeIRC();
+	virtual void irc_command_join(string prefix,string param[5],int countParam)=0;
+	virtual void irc_command_privmsg(string prefix,string param[5],int countParam)=0;
+};

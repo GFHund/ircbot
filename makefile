@@ -1,12 +1,27 @@
 CC=g++
-LIBIRCCLIENT=/home/tux/libs/libircclient-1.3
+FLAGS = -Wall -pedantic -ansi
 
 
-PHIIRC:
-	$(CC) -o $@ main.c -lircclient -L$(LIBIRCCLIENT)/src -I$(LIBIRCCLIENT)/include
+PHIIRC: phiirc.o
+	$(CC) -o $@ main.cpp phiirc.o
 	
-phiirc.o:
-	$(CC) -c -o $@ phiirc.h phiirc.cpp irc.o
+#main.o: phiirc.o
+#	$(CC) -c main.cpp phiirc.o
 	
-irc.o:
-	$(CC) -c  -o $@ irc.h irc.cpp
+phiirc.o: irc.o
+	$(CC) -c phiirc.h phiirc.cpp irc.h irc.cpp irc.o
+	
+#irc.o:
+#	$(CC) -c   irc.h irc.cpp
+	
+test:
+	$(CC) $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp -o phiirc
+
+debug:
+
+debugTest:
+	$(CC) -g $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp -o phiirc
+
+clean:
+	rm *.o
+	rm PHIIRC

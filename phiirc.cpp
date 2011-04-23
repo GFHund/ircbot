@@ -1,4 +1,21 @@
-static void phiirc::deamonize()
+#include "phiirc.h"
+
+
+phiirc::phiirc(){}
+
+
+void phiirc::child_handler(int signum)
+{
+	switch (signum)
+	{
+		case SIGALRM:exit(1);break;
+		case SIGUSR1:exit(0);break;
+		case SIGCHLD:exit(1);break;
+		case SIGINT:exit(0);break;
+	}
+}
+
+void phiirc::deamonize(string name)
 {
 	pid_t sid, pid, parent;
 	int lfp=-1;
@@ -13,7 +30,7 @@ static void phiirc::deamonize()
 		lfp = open(lockfile,O_RDWR|O_CREAT,0640);
 		if(lfp < 0 )
 		{
-			syslog(LOG_ERR,"Unable to create lock1 file %s,code=%d (s)",
+			syslog(LOG_ERR,"Unable to create lock1 file %s,code=%d (%s)",
 			lockfile,errno,strerror(errno));
 			exit(1);
 		}
@@ -97,15 +114,83 @@ static void phiirc::deamonize()
 	kill(parent,SIGUSR1);
 }
 
+int phiirc::potenz(int Basis,int exponent)
+{
+	int ret = Basis;
+	for(int i=1;i<exponent;i++)
+	{
+		ret *= ret;
+	}
+	return ret;
+}
+
+int phiirc::charToInt(char* zahl)
+{
+	int size = sizeof(zahl);
+	int ret=0;
+	for(int i=0;i<size;i++)
+	{
+		ret+=(zahl[i]-0x30)*(potenz(10,size-i));
+	}
+	return ret;
+}
+
+
 void phiirc::init(int argc,char * argv[])
 {
-	string *args = new string[argc];
-	
-	for(int i=0;i<argc,i++)
+	//printf("%i\n",argc);
+	if(argc >=4)
 	{
-		args.insert(0,argv[i]);
+		bool deamon = false;
+		for(int i=0;i<argc;i++)
+		{
+			printf("%s\n",argv[i]);
+			if(strcmp(argv[i],"-d")==0)
+			{
+				deamon = true;
+			}
+		}
+		//toDo: Server Channel und port Varibalen zuweisen und deamon starten irc initialisieren und join und privmsg methoden implementieren
+		
+		string server (argv[1]);
+		
+		int port = charToInt(argv[2]);
+		//printf("test\n");
+		string channel (argv[3]);
+		
+		//printf("test2\n");
+		
+		if(deamon==true)
+		{
+			printf("Erzeuge Deamon\n");
+			deamonize(argv[0]);
+		}
+		
+		initIRC(server,port,channel);
+		printf("Server wurde gestartet und ist bereit\n");
+		while(true)
+		{
+			updateIRC();
+		}
+	}
+	else 
+	{
+		for(int i=1;i<argc;i++)
+		{
+			if(strcmp(argv[i],"-h")==0||strcmp(argv[i],"--help")==0)
+			{
+				printf("Dies ist die Hilfe von PhiIRC.\n Befehle:\n -h --help Hilfe für PhiIRC\n-d schaltet den Deamon Ab\n");
+			}
+				
+		}
 	}
 	
+	
+	
+	
+	
+	
+	/*
 	bool deamon=true;
 	
 	for(int i=0;i<argc;i++)
@@ -120,7 +205,7 @@ void phiirc::init(int argc,char * argv[])
 			deamon=false;
 	}
 	
-	this->initIRC(false,false,false,false);
+	this->initIRC();
 	
 	if(deamon==true)
 	{
@@ -132,11 +217,31 @@ void phiirc::init(int argc,char * argv[])
 		this->runIRC();
 	}
 	
-	
+	*/
 }
 
 
-void phiirc::event_privmsg(irc_session_t* session,const char* event,const char* origin,const char** params,unsigned int count)
+void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 {
-	
+	if(prefix!="")
+	{
+		printf("%s betritt den %s Kanal\n",prefix.c_str(),param[0].c_str());
+	}
+	else
+	{
+		printf("Jemand betritt den %s Kanal\n",param[0].c_str());
+	}
 }
+
+void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
+{
+	if(prefix!="")
+	{
+		printf("%s an %s: %s\n",prefix.c_str(),param[0].c_str(),param[1].c_str());
+	}
+	else
+	{
+		printf("Jemand an %s: %s\n",param[0].c_str(),param[1].c_str());
+	}
+}
+	

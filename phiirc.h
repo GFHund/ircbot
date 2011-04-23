@@ -1,24 +1,40 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <syslog.h>
+#include <errno.h>
+#include <pwd.h>
+#include <signal.h>
+
 #include <string.h>
-#include <sting>
-#include "libircclient.h"
+#include <string>
+
+#include "irc.h"
 
 using namespace std;
 
-class phiirc
+class phiirc : public irc
 {
-private:
-	struct struct
-	{
-		char* channel;
-		char* nick;
-	}irc_ctx_t;
-	
-	static void deamonize();
-	
-	void event_privmsg(irc_session_t* session,const char* event,const char* origin,const char** params,unsigned int count);
 public:
+	phiirc();
+
+
+private:
+	static void child_handler(int signum);
+	static void deamonize(string name);
+	int charToInt(char* zahl);
+	int potenz(int Basis,int exponent);
+
+protected:
+	
+	void irc_command_join(string prefix,string param[5],int countParam);
+	void irc_command_privmsg(string prefix,string param[5],int countParam);
+	
+public:
+	
 	void init(int argc,char* argv[]);
-	
-	
-}
+
+};
