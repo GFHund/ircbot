@@ -3,6 +3,12 @@
 
 phiirc::phiirc(){}
 
+phiirc::~phiirc()
+{
+	closeIRC();
+	this->pluginsystem.closePlugin();
+}
+
 
 void phiirc::child_handler(int signum)
 {
@@ -139,6 +145,9 @@ int phiirc::charToInt(char* zahl)
 void phiirc::init(int argc,char * argv[])
 {
 	//printf("%i\n",argc);
+	char* plugin="sqlite";
+	logname = "sqlite";
+	//char* database="ircbotdb";
 	if(argc >=4)
 	{
 		bool deamon = false;
@@ -149,16 +158,22 @@ void phiirc::init(int argc,char * argv[])
 			{
 				deamon = true;
 			}
+			if(strcmp(argv[i],"-p")==0)
+			{
+				plugin = argv[i+1];
+			}
+			if(strcmp(argv[i],"-d")==0)
+			{
+				this->logname = argv[i+1];
+			}
 		}
 		//toDo: Server Channel und port Varibalen zuweisen und deamon starten irc initialisieren und join und privmsg methoden implementieren
 		
 		string server (argv[1]);
-		
 		int port = charToInt(argv[2]);
-		//printf("test\n");
 		string channel (argv[3]);
 		
-		//printf("test2\n");
+		this->pluginsystem.initPlugin(plugin);
 		
 		if(deamon==true)
 		{
@@ -223,14 +238,18 @@ void phiirc::init(int argc,char * argv[])
 
 void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 {
+	/*
 	if(prefix!="")
 	{
-		printf("%s betritt den %s Kanal\n",prefix.c_str(),param[0].c_str());
+		//printf("%s betritt den %s Kanal\n",prefix.c_str(),param[0].c_str());
+		
 	}
 	else
 	{
-		printf("Jemand betritt den %s Kanal\n",param[0].c_str());
+		//printf("Jemand betritt den %s Kanal\n",param[0].c_str());
+		
 	}
+	*/
 }
 
 void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
@@ -243,5 +262,15 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 	{
 		printf("Jemand an %s: %s\n",param[0].c_str(),param[1].c_str());
 	}
+}
+
+void phiirc::irc_command_nick(string prefix,string param[5],int countParam)
+{
+	this->pluginsystem.userLog(this->logname,param[0],
+}
+
+void phiirc::irc_command_quit(string prefix,string param[5],int countParam)
+{
+	
 }
 	

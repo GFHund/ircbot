@@ -2,23 +2,29 @@ CC=g++
 FLAGS = -Wall -pedantic -ansi
 
 
-PHIIRC: phiirc.o
-	$(CC) -o $@ main.cpp phiirc.o
+PHIIRC: irc.o plugin.o sqlite.so
+	$(CC) -o $@ main.cpp phiirc.h phiirc.cpp irc.o plugin.o
 	
 #main.o: phiirc.o
 #	$(CC) -c main.cpp phiirc.o
 	
-phiirc.o: irc.o
-	$(CC) -c phiirc.h phiirc.cpp irc.h irc.cpp irc.o
+irc.o: 
+	$(CC) -c irc.h irc.cpp irc.o
 	
-#irc.o:
-#	$(CC) -c   irc.h irc.cpp
+plugin:
+	$(CC) -cc plugin.h plugin.cpp
 	
+sqlite.so:
+	cd ./Plugins/sqlite
+	gcc -o sqlite.so sqlite.c -shared -fpic
+	cd ../../
+
 test:
 	$(CC) $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp -o phiirc
 
-debug:
 
+debug:
+	
 debugTest:
 	$(CC) -g $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp -o phiirc
 

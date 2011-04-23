@@ -118,6 +118,14 @@ void irc::updateIRC()
 	{
 		irc_command_privmsg(prefix,param,numparam);
 	}
+	else if(message.find("NICK")!=string::npos)
+	{
+		irc_command_nick(prefix,param,numparam);
+	}
+	else if(message.find("QUIT")!=string::npos)
+	{
+		irc_command_quit(prefix,param,numparam);
+	}
 	
 }
 
