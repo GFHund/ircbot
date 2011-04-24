@@ -2,7 +2,7 @@ CC=g++
 FLAGS = -Wall -pedantic -ansi
 
 
-PHIIRC: irc.o plugin.o sqlite.so
+PHIIRC: irc.o plugin.o
 	$(CC) -o $@ main.cpp phiirc.h phiirc.cpp irc.o plugin.o
 	
 #main.o: phiirc.o
@@ -12,15 +12,16 @@ irc.o:
 	$(CC) -c irc.h irc.cpp irc.o
 	
 plugin:
-	$(CC) -cc plugin.h plugin.cpp
+	$(CC) -cc plugin.h plugin.cpp -ldl
 	
+
+test: 
+	$(CC) $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp plugin.h plugin.cpp -o phiirc
+
 sqlite.so:
 	cd ./Plugins/sqlite
 	gcc -o sqlite.so sqlite.c -shared -fpic
 	cd ../../
-
-test:
-	$(CC) $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.h irc.cpp -o phiirc
 
 
 debug:

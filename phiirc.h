@@ -14,6 +14,7 @@
 
 #include "irc.h"
 #include "plugin.h"
+#include <time.h>
 
 using namespace std;
 

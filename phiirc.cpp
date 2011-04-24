@@ -254,19 +254,51 @@ void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 
 void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 {
-	if(prefix!="")
+	string str = param[1];
+	if(str.find("Chatbot:")!=string::npos)
 	{
-		printf("%s an %s: %s\n",prefix.c_str(),param[0].c_str(),param[1].c_str());
+		int pos;
+		if((pos=str.find("when"))!=string::npos)
+		{
+			string user = str.substr(pos+5);
+			this->pluginsystem.readUser(this->logname,user.c_str());
+			string msg="";
+			msg+=user;
+			msg+=" was here on ";
+			msg+=this->loginsystem.lastTimestamp;
+			irc_send_command_privmsg(user,msg);
+		}
 	}
 	else
 	{
-		printf("Jemand an %s: %s\n",param[0].c_str(),param[1].c_str());
+		string user("Someone");
+		
+		if(prefix!="")
+		{
+			user = prefix;
+		}
+		
+		this->conversationLog(this->logname,user.c_str(),param[1]);
 	}
 }
 
 void phiirc::irc_command_nick(string prefix,string param[5],int countParam)
 {
-	this->pluginsystem.userLog(this->logname,param[0],
+	time_t time;
+	struct tm* currentTime;
+	time = time(0);
+	currentTime = localtime(&time);
+	char strTime[26];
+	sprintf(strTime,"%i-%i-%i %i:%i:%i.000",
+	currentTime->year+1900,
+	currentTime->mon+1,
+	currentTime->mday,
+	currentTime->hour,
+	currentTime->tm_min,
+	currentTime->tm_sec);
+	//string strTime(
+	
+	this->pluginsystem.userLog(this->logname,param[0],strTime,false);
 }
 
 void phiirc::irc_command_quit(string prefix,string param[5],int countParam)

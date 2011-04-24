@@ -133,3 +133,15 @@ void irc::closeIRC()
 {
 	close(this->sock);
 }
+
+
+void irc::irc_send_command_privmsg(string user,string message)
+{
+	string msg(":Chatbot PRIVMSG ");
+	msg+=user;
+	msg += " :";
+	msg += message;
+	msg += "\r\n";
+	
+	send(this->sock,(char*)msg.c_str(),msg.size(),0);
+}

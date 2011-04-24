@@ -20,6 +20,9 @@ protected:
 	int initIRC(string ip,int port,string channel);
 	void updateIRC();
 	void closeIRC();
+
+	void irc_send_command_privmsg(string user,string message);
+
 	virtual void irc_command_join(string prefix,string param[5],int countParam)=0;
 	virtual void irc_command_privmsg(string prefix,string param[5],int countParam)=0;
 	virtual void irc_command_nick(string prefix,string param[5],int countParam)=0;

@@ -1,9 +1,10 @@
+#include <string>
 #include <dlfcn.h>
 
 
-typedef int (*loguser)(char* ,char*,char* ,bool);
-typedef int (*logconv)(char* ,char*,char*);
-typedef int (*read)(char* ,char*);
+typedef int (* loguser)(char* ,char*,char* ,bool);
+typedef int (* logconv)(char* ,char*,char*);
+typedef int (* read)(char* ,char*);
 
 class plugin
 {
@@ -14,6 +15,6 @@ public:
 	read readUser;
 	char* lastTimestamp;
 
-	void initPlugin(char* plugin);
+	int initPlugin(char* plugin);
 	void closePlugin();
-}
+};

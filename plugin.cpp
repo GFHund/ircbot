@@ -16,7 +16,7 @@ int plugin::initPlugin(char* plugin)
 	this->userLog = dlsym(this->handle,"logUser");
 	this->conversationLog = dlsym(this->handle,"logMsg");
 	this->readUser = dlsym(this->handle,"readUser");
-	this->lastTimestamp = dlsym(this->handle,"lastTimestamp");
+	this->lastTimestamp = (char*)dlsym(this->handle,"lastTimestamp");
 	
 }
 

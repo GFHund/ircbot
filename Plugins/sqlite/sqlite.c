@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <string.h>
 #include <sqlite3.h>
 /*
@@ -11,7 +12,7 @@ void initLog()
 	
 }
 */
-int logUser(char* logname,char* user,char* time,bool quit)
+int logUser(char* logname, char* user, char* time, bool quit)
 {
 	sqlite3* db;
 	
@@ -19,10 +20,10 @@ int logUser(char* logname,char* user,char* time,bool quit)
 	
 	int rc;
 	
-	rc = sqlite3_open(logname,db);
+	rc = sqlite3_open(logname,&db);
 	if(rc)
 	{
-		fprintf("stderr","Kann Datenbank %s nicht öffnen:%s\n",dbname,sqlite3_errmsg(db));
+		fprintf(stderr,"Kann Datenbank %s nicht öffnen:%s\n",logname,sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return -1;
 	}
@@ -30,9 +31,7 @@ int logUser(char* logname,char* user,char* time,bool quit)
 	char sql[80];
 	strcpy(sql,"INSERT INTO userTimestamp(user,time,quit) VALUES (");
 	strcat(sql,user);
-	strcat(sql,",");
-	strcat(sql,time);
-	strcat(sql,",");
+	strcat(sql,",date('now'),");
 	strcat(sql,quit);
 	strcat(sql,");");
 	
@@ -55,10 +54,10 @@ int logMsg(char* logname,char* user,char* message)
 	
 	int rc;
 	
-	rc = sqlite3_open(logname,db);
+	rc = sqlite3_open(logname,&db);
 	if(rc)
 	{
-		fprintf("stderr","Kann Datenbank %s nicht öffnen:%s\n",dbname,sqlite3_errmsg(db));
+		fprintf(stderr,"Kann Datenbank %s nicht öffnen:%s\n",logname,sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return -1;
 	}
@@ -98,10 +97,10 @@ int readUser(char* logname,char* user)
 	
 	int rc;
 	
-	rc = sqlite3_open(logname,db);
+	rc = sqlite3_open(logname,&db);
 	if(rc)
 	{
-		fprintf("stderr","Kann Datenbank %s nicht öffnen:%s\n",dbname,sqlite3_errmsg(db));
+		fprintf(stderr,"Kann Datenbank %s nicht öffnen:%s\n",logname,sqlite3_errmsg(db));
 		sqlite3_close(db);
 		return -1;
 	}
