@@ -12,7 +12,7 @@ void initLog()
 	
 }
 */
-int logUser(char* logname, char* user, char* time, bool quit)
+int logUser(char* logname, char* user, char* time, int quit)
 {
 	sqlite3* db;
 	
@@ -28,11 +28,14 @@ int logUser(char* logname, char* user, char* time, bool quit)
 		return -1;
 	}
 	
+	char strQuit;
+	strQuit = 0x03+quit;
+	
 	char sql[80];
 	strcpy(sql,"INSERT INTO userTimestamp(user,time,quit) VALUES (");
 	strcat(sql,user);
 	strcat(sql,",date('now'),");
-	strcat(sql,quit);
+	strcat(sql,&strQuit);
 	strcat(sql,");");
 	
 	rc = sqlite3_exec(db,sql,NULL,0,&Error);
@@ -62,7 +65,7 @@ int logMsg(char* logname,char* user,char* message)
 		return -1;
 	}
 	
-	char sql[80];
+	char sql[200];
 	strcpy(sql,"INSERT INTO conversation(user,message) VALUES (");
 	strcat(sql,user);
 	strcat(sql,",");
@@ -105,7 +108,7 @@ int readUser(char* logname,char* user)
 		return -1;
 	}
 	
-	char sql[80];
+	char sql[200];
 	strcpy(sql,"SELECT time FROM userTimestamp WHERE user = ");
 	strcat(sql,user);
 	strcat(sql,"ORDER BY time DESC LIMIT 1;");

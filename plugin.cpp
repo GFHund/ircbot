@@ -7,15 +7,15 @@ int plugin::initPlugin(char* plugin)
 	pfad +="/";
 	pfad += plugin;
 	pfad += ".so";
-	this->handle=dlopen(pfad,RTLD_LAZY);
+	this->handle=dlopen(pfad.c_str(),RTLD_LAZY);
 	if(!this->handle)
 	{
 		return -1;
 	}
 	
-	this->userLog = dlsym(this->handle,"logUser");
-	this->conversationLog = dlsym(this->handle,"logMsg");
-	this->readUser = dlsym(this->handle,"readUser");
+	this->userLog = (loguser) dlsym(this->handle,"logUser");
+	this->conversationLog = (logconv) dlsym(this->handle,"logMsg");
+	this->readUser = (readUserfunc) dlsym(this->handle,"readUser");
 	this->lastTimestamp = (char*)dlsym(this->handle,"lastTimestamp");
 	
 }

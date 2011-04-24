@@ -5,6 +5,7 @@ phiirc::phiirc(){}
 
 phiirc::~phiirc()
 {
+	irc_send_command_quit("Beende das Programm");
 	closeIRC();
 	this->pluginsystem.closePlugin();
 }
@@ -122,10 +123,18 @@ void phiirc::deamonize(string name)
 
 int phiirc::potenz(int Basis,int exponent)
 {
-	int ret = Basis;
-	for(int i=1;i<exponent;i++)
+	int ret;
+	if(exponent>0)
 	{
-		ret *= ret;
+		 ret = Basis;
+		for(int i=1;i<exponent;i++)
+		{
+			ret *= Basis;
+		}
+	}
+	else if(exponent ==0)
+	{
+		ret = 1;
 	}
 	return ret;
 }
@@ -134,9 +143,11 @@ int phiirc::charToInt(char* zahl)
 {
 	int size = sizeof(zahl);
 	int ret=0;
+	printf("Potenz:\n%i:%s\n",size,zahl);
 	for(int i=0;i<size;i++)
 	{
-		ret+=(zahl[i]-0x30)*(potenz(10,size-i));
+		ret+=(zahl[i]-0x30)*(potenz(10,(size-1)-i));
+		printf("%i    %i   %i\n",ret,(zahl[i]-0x30),potenz(10,(size-1)-i));
 	}
 	return ret;
 }
@@ -144,9 +155,13 @@ int phiirc::charToInt(char* zahl)
 
 void phiirc::init(int argc,char * argv[])
 {
-	//printf("%i\n",argc);
-	char* plugin="sqlite";
-	logname = "sqlite";
+	
+	char* plugin=new char[40];
+	strcpy(plugin,"sqlite");
+	printf("%i\n",argc);
+	//logname;
+	logname = new char[40];
+	strcpy(this->logname,"sqlite");
 	//char* database="ircbotdb";
 	if(argc >=4)
 	{
@@ -238,6 +253,24 @@ void phiirc::init(int argc,char * argv[])
 
 void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 {
+	printf("Jemand ist dem Channel beigetreten\n");
+	
+	
+	time_t curtime;
+	struct tm* currentTime;
+	curtime = time(0);
+	currentTime = localtime(&curtime);
+	char strTime[26];
+	sprintf(strTime,"%i-%i-%i %i:%i:%i.000",
+	currentTime->tm_year+1900,
+	currentTime->tm_mon+1,
+	currentTime->tm_mday,
+	currentTime->tm_hour,
+	currentTime->tm_min,
+	currentTime->tm_sec);
+	//string strTime(
+	
+	this->pluginsystem.userLog(this->logname,(char*)param[0].c_str(),strTime,false);
 	/*
 	if(prefix!="")
 	{
@@ -254,6 +287,7 @@ void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 
 void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 {
+	printf("Message eingetroffen\n");
 	string str = param[1];
 	if(str.find("Chatbot:")!=string::npos)
 	{
@@ -261,12 +295,12 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 		if((pos=str.find("when"))!=string::npos)
 		{
 			string user = str.substr(pos+5);
-			this->pluginsystem.readUser(this->logname,user.c_str());
+			this->pluginsystem.readUser(this->logname,(char*)user.c_str());
 			string msg="";
 			msg+=user;
 			msg+=" was here on ";
-			msg+=this->loginsystem.lastTimestamp;
-			irc_send_command_privmsg(user,msg);
+			msg+=this->pluginsystem.lastTimestamp;
+			irc_send_command_privmsg(msg);
 		}
 	}
 	else
@@ -278,27 +312,27 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 			user = prefix;
 		}
 		
-		this->conversationLog(this->logname,user.c_str(),param[1]);
+		this->pluginsystem.conversationLog(this->logname,(char*)user.c_str(),(char*)param[1].c_str());
 	}
 }
 
 void phiirc::irc_command_nick(string prefix,string param[5],int countParam)
 {
-	time_t time;
+	time_t curtime;
 	struct tm* currentTime;
-	time = time(0);
-	currentTime = localtime(&time);
+	curtime = time(0);
+	currentTime = localtime(&curtime);
 	char strTime[26];
 	sprintf(strTime,"%i-%i-%i %i:%i:%i.000",
-	currentTime->year+1900,
-	currentTime->mon+1,
-	currentTime->mday,
-	currentTime->hour,
+	currentTime->tm_year+1900,
+	currentTime->tm_mon+1,
+	currentTime->tm_mday,
+	currentTime->tm_hour,
 	currentTime->tm_min,
 	currentTime->tm_sec);
 	//string strTime(
 	
-	this->pluginsystem.userLog(this->logname,param[0],strTime,false);
+	this->pluginsystem.userLog(this->logname,(char*)param[0].c_str(),strTime,false);
 }
 
 void phiirc::irc_command_quit(string prefix,string param[5],int countParam)

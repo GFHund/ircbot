@@ -1,10 +1,11 @@
 #include <string>
 #include <dlfcn.h>
 
-
-typedef int (* loguser)(char* ,char*,char* ,bool);
+typedef int (* loguser)(char* ,char*,char* ,int);
 typedef int (* logconv)(char* ,char*,char*);
-typedef int (* read)(char* ,char*);
+typedef int (* readUserfunc)(char* ,char*);
+
+using namespace std;
 
 class plugin
 {
@@ -12,7 +13,7 @@ public:
 	void* handle;
 	loguser userLog;
 	logconv conversationLog;
-	read readUser;
+	readUserfunc readUser;
 	char* lastTimestamp;
 
 	int initPlugin(char* plugin);
