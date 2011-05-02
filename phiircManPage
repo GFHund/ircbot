@@ -1,0 +1,18 @@
+./Man pager für phiirc
+.TH phiirc "Mai 2011" Philipp Holzmann "phiirc ManPage"
+.SH NAME
+irc chatbot mit sqlite datenbank
+.SH SYNTAX
+\fBphiirc\fP server port channel [-d][-p plugin][-f file]
+.SH DESCRIPTION
+Das Programm loggt sich als client in ein IRC Server ein. Einmal drin loggt es das gespräch mit. Auch wer sich anmeldet wird mitgeloggt. Der User kann durch "Chatbot: when user" abfragen wann ein bestimmter userer zu letzt da war.
+
+In server wird die Adresse des irc Servers angegeben. Mit Port wird der Port angegeben auf dem der Server hört und in Channel wird der Kanal eingetrage in den sich der Chat bot einloggen soll.
+.SH OPTION
+\-d	Aktiviert den Deamon
+.br
+\-p	angeben welches plugin benutzt wird. Default:sqlite
+.br
+\-f	Gibt an von welcher Datei die Datenbank liest. Default: ircbotdb
+.SH AUTOR
+Philipp(philippholzmann@yahoo.de)

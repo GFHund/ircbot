@@ -161,7 +161,7 @@ void phiirc::init(int argc,char * argv[])
 	printf("%i\n",argc);
 	//logname;
 	logname = new char[40];
-	strcpy(this->logname,"sqlite");
+	strcpy(this->logname,"ircbotdb");
 	//char* database="ircbotdb";
 	if(argc >=4)
 	{
@@ -177,7 +177,7 @@ void phiirc::init(int argc,char * argv[])
 			{
 				plugin = argv[i+1];
 			}
-			if(strcmp(argv[i],"-d")==0)
+			if(strcmp(argv[i],"-f")==0)
 			{
 				this->logname = argv[i+1];
 			}
