@@ -151,17 +151,39 @@ int phiirc::charToInt(char* zahl)
 	}
 	return ret;
 }
-
+/*
+char* phiirc::intToChar(int zahl)
+{
+	int basis,imax;
+	char einzelneZahl;
+	for(int i=0;i<10;i++)
+	{
+		if(potenz(10,i)<zahl)
+		{
+			basis = potenz(10,i-1);
+			imax = i-1;
+			break;
+		}
+	}
+	char * zahl=new char[imax];
+	for(int i=imax;i!=0;i--)
+	{
+		zahl[imax-1] = (char)((zahl%portenz(10,i))-+0x30);
+	}
+	return zahl;
+}
+*/
 
 void phiirc::init(int argc,char * argv[])
 {
 	
 	char* plugin=new char[40];
 	strcpy(plugin,"sqlite");
-	printf("%i\n",argc);
+	//printf("%i\n",argc);
 	//logname;
-	logname = new char[40];
+	this->logname = new char[40];
 	strcpy(this->logname,"ircbotdb");
+	//strcpy(this->logname,"sqlite");
 	//char* database="ircbotdb";
 	if(argc >=4)
 	{
@@ -188,7 +210,17 @@ void phiirc::init(int argc,char * argv[])
 		int port = charToInt(argv[2]);
 		string channel (argv[3]);
 		
-		this->pluginsystem.initPlugin(plugin);
+		
+		
+		int fehler = this->pluginsystem.initPlugin(plugin);
+		
+		if(fehler == -1)
+		{
+			printf("Fehler beim Initialisieren des Plugin Systems");
+			return;
+		}
+		
+		//this->pluginsystem.userLog("ircbotdb","Chatbot","2011-05-07 12:05:00.000",0);
 		
 		if(deamon==true)
 		{
@@ -213,6 +245,7 @@ void phiirc::init(int argc,char * argv[])
 			}
 				
 		}
+		return;
 	}
 	
 	
@@ -260,17 +293,25 @@ void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 	struct tm* currentTime;
 	curtime = time(0);
 	currentTime = localtime(&curtime);
-	char strTime[26];
-	sprintf(strTime,"%i-%i-%i %i:%i:%i.000",
+	char strTime[50];
+	printf("%s %i\n",this->logname,currentTime->tm_min);
+	
+	//char strTime[50]="2011-05-02 12:43:30.000";
+	
+	snprintf(strTime,40,"%i-%i-%i %i:%i:%i.000",
 	currentTime->tm_year+1900,
 	currentTime->tm_mon+1,
 	currentTime->tm_mday,
 	currentTime->tm_hour,
 	currentTime->tm_min,
 	currentTime->tm_sec);
-	//string strTime(
-	
-	this->pluginsystem.userLog(this->logname,(char*)param[0].c_str(),strTime,false);
+	//string strTime(*/
+	printf("abcd");
+	char* para = new char[param[0].size()+2];
+	strcpy(para,param[0].c_str());
+	//char* para = new char[50];
+	//strcpy(para,"chatbot");
+	this->pluginsystem.userLog(this->logname,para,strTime,false);
 	/*
 	if(prefix!="")
 	{
@@ -291,7 +332,7 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 	string str = param[1];
 	if(str.find("Chatbot:")!=string::npos)
 	{
-		int pos;
+		unsigned int pos;
 		if((pos=str.find("when"))!=string::npos)
 		{
 			string user = str.substr(pos+5);

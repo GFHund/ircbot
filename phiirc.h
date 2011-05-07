@@ -32,6 +32,7 @@ private:
 	static void child_handler(int signum);
 	static void deamonize(string name);
 	int charToInt(char* zahl);
+	char* intToChar(int zahl);
 	int potenz(int Basis,int exponent);
 	
 

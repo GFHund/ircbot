@@ -3,7 +3,7 @@ FLAGS = -Wall -pedantic -ansi
 
 
 PHIIRC: irc.o plugin.o
-	$(CC) -o $@ main.cpp phiirc.h phiirc.cpp irc.o plugin.o -ldl
+	$(CC) -o $@ $(FLAGS) main.cpp phiirc.h phiirc.cpp irc.o plugin.o -ldl
 	
 #main.o: phiirc.o
 #	$(CC) -c main.cpp phiirc.o
