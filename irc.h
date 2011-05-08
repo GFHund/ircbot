@@ -15,10 +15,12 @@ class irc
 private: 
 	//extern int h_errno;
 	int sock;
+
+protected:	
 	string mstr_channel;
 	string mstr_ip;
 	int mi_port;
-protected:	
+
 	int initIRC(string ip,int port,string channel);
 	void updateIRC();
 	void closeIRC();

@@ -182,12 +182,12 @@ void irc::closeIRC()
 
 void irc::irc_send_command_privmsg(string message)
 {
-	string msg(":Chatbot PRIVMSG #");
-	msg+=this->mstr_channel;
+	string msg("PRIVMSG #");
+	msg+=this->mstr_channel.c_str();
 	msg += " :";
 	msg += message;
 	msg += "\r\n";
-	printf("%s\n",msg.c_str());
+	printf("\n%s\n",msg.c_str());
 	send(this->sock,(char*)msg.c_str(),msg.size(),0);
 }
 

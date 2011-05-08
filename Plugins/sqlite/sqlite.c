@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sqlite3.h>
 /*
@@ -103,7 +104,12 @@ char* lastTimestamp;
 
 int ergReadUser(void* NotUsed,int argc,char**argv,char**colname)
 {
-	lastTimestamp = argv[0];
+	int size;
+	printf("\nDer User war am %s da\n",argv[0]);
+	size = strlen(argv[0]);
+	lastTimestamp = calloc(size,sizeof(char));
+	strcpy(lastTimestamp,argv[0]);
+	printf("%s\n",lastTimestamp);
 	return 0;
 }
 
@@ -127,10 +133,11 @@ int readUser(char* logname,char* user)
 	}
 	
 	
-	strcpy(sql,"SELECT time FROM userTimestamp WHERE user = ");
+	strcpy(sql,"SELECT time FROM userTimestamp WHERE user = '");
 	strcat(sql,user);
-	strcat(sql,"ORDER BY time DESC LIMIT 1;");
+	strcat(sql,"' ORDER BY time DESC LIMIT 1;");
 	
+	printf("%s\n",sql);
 	rc = sqlite3_exec(db,sql,ergReadUser,0,&Error);
 	if(rc!=SQLITE_OK)
 	{

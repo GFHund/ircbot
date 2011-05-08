@@ -176,7 +176,6 @@ char* phiirc::intToChar(int zahl)
 
 void phiirc::init(int argc,char * argv[])
 {
-	
 	char* plugin=new char[40];
 	strcpy(plugin,"sqlite");
 	//printf("%i\n",argc);
@@ -210,7 +209,9 @@ void phiirc::init(int argc,char * argv[])
 		int port = charToInt(argv[2]);
 		string channel (argv[3]);
 		
-		
+		this->mstr_ip = server;
+		this->mi_port = port;
+		this->mstr_channel = channel;
 		
 		int fehler = this->pluginsystem.initPlugin(plugin);
 		
@@ -286,7 +287,7 @@ void phiirc::init(int argc,char * argv[])
 
 void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 {
-	printf("Jemand ist dem Channel beigetreten\n");
+	//printf("Jemand ist dem Channel beigetreten\n");
 	
 	
 	time_t curtime;
@@ -306,9 +307,25 @@ void phiirc::irc_command_join(string prefix,string param[5],int countParam)
 	currentTime->tm_min,
 	currentTime->tm_sec);
 	//string strTime(*/
-	printf("abcd");
-	char* para = new char[param[0].size()+2];
-	strcpy(para,param[0].c_str());
+	//printf("abcd");
+	char* para = new char[prefix.size()];
+	//strcpy(para,param[0].c_str());
+	
+	//Parse Benutzername
+	for(int i=1;i<prefix.size();i++)
+	{
+		if(prefix.c_str()[i]!='!' && prefix.c_str()[i+1]!='~')
+		{
+			
+			para[i-1] = prefix.c_str()[i];
+		}
+		else
+		{
+			para[i] = '\0';
+			break;
+		}
+	}
+	
 	//char* para = new char[50];
 	//strcpy(para,"chatbot");
 	this->pluginsystem.userLog(this->logname,para,strTime,false);
@@ -336,7 +353,13 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 		if((pos=str.find("when"))!=string::npos)
 		{
 			string user = str.substr(pos+5);
+			user = user.substr(0,user.size()-2);
+			for(int i=0;i<user.size();i++)
+				printf("%c  %x \n",user.data()[i],user.data()[i]);
 			this->pluginsystem.readUser(this->logname,(char*)user.c_str());
+			
+			printf("%s\n",this->pluginsystem.lastTimestamp);
+			
 			string msg="";
 			msg+=user;
 			msg+=" was here on ";
@@ -350,7 +373,17 @@ void phiirc::irc_command_privmsg(string prefix,string param[5],int countParam)
 		
 		if(prefix!="")
 		{
-			user = prefix;
+			user ="";
+			for(int i=1;i<prefix.size();i++)
+			{
+				if(prefix.c_str()[i] != '!' && prefix.c_str()[i+1] != '~')
+					user += prefix.c_str()[i];
+				else
+				{
+					break;
+				}
+				
+			}
 		}
 		
 		this->pluginsystem.conversationLog(this->logname,(char*)user.c_str(),(char*)param[1].c_str());
